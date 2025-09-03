@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaX</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-header">
+                <h2 id="authTitle">Welcome to AlphaX</h2>
+                <p id="authSubtitle">Sign in to start chatting with AI</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email address">
+                    <div class="input-highlight"></div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    <div class="input-highlight"></div>
+                </div>
+                <button type="submit" class="auth-btn primary" id="loginBtn">
+                    <span class="btn-text">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </span>
+                    <div class="btn-spinner" style="display: none;">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                </button>
+                <div class="auth-error" id="loginError"></div>
+            </form>
+            
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">
+                        <i class="fas fa-user"></i> Full Name
+                    </label>
+                    <input type="text" id="registerName" required placeholder="Enter your full name">
+                    <div class="input-highlight"></div>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" id="registerEmail" required placeholder="Enter your email address">
+                    <div class="input-highlight"></div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="registerPassword" required placeholder="Create a secure password (min 6 characters)">
+                    <div class="input-highlight"></div>
+                </div>
+                <button type="submit" class="auth-btn primary" id="registerBtn">
+                    <span class="btn-text">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </span>
+                    <div class="btn-spinner" style="display: none;">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                </button>
+                <div class="auth-error" id="registerError"></div>
+            </form>
+            
+            <!-- Toggle between login/register -->
+            <div class="auth-toggle">
+                <span id="authToggleText">Don't have an account?</span>
+                <button type="button" class="auth-link" id="authToggleBtn">Sign up</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    New chat
+                </button>
+            </div>
+            
+            <div class="chat-history" id="chatHistory">
+                <!-- Chat history items will be populated here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">User</span>
+                        <span class="user-stats" id="userStats">0 chats</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="chat-header">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="chat-title">AlphaX</h1>
+                <div class="header-actions">
+                    <button class="header-btn" title="Clear conversation" id="clearBtn">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="header-btn" title="Logout" id="headerLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <div class="logo">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h1>How can I help you today?</h1>
+                        <p>I'm AlphaX, your intelligent AI assistant. Ask me anything from coding help to creative writing, and I'll provide detailed, helpful responses.</p>
+                        <div class="example-prompts">
+                            <div class="prompt-card" data-prompt="Explain quantum computing in simple terms">
+                                <i class="fas fa-atom"></i>
+                                <span>Explain quantum computing in simple terms</span>
+                            </div>
+                            <div class="prompt-card" data-prompt="Write a Python function to calculate fibonacci numbers">
+                                <i class="fas fa-code"></i>
+                                <span>Write a Python function to calculate fibonacci numbers</span>
+                            </div>
+                            <div class="prompt-card" data-prompt="What are the key principles of sustainable development?">
+                                <i class="fas fa-leaf"></i>
+                                <span>What are the key principles of sustainable development?</span>
+                            </div>
+                            <div class="prompt-card" data-prompt="Help me create a study plan for learning machine learning">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Help me create a study plan for learning machine learning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be populated here -->
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Message AlphaX..." 
+                        rows="1"
+                        maxlength="4000"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <span class="disclaimer">AlphaX can make mistakes. Consider checking important information.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
