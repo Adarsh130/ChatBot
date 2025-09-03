@@ -73,13 +73,33 @@ The frontend will run on `http://localhost:8000` and automatically open in your 
 - Click on example prompts or type your own message
 - Enjoy the secure, personalized ChatGPT-like experience!
 
+## 🚀 Deployment
+
+### Deploy to Render (Recommended)
+
+Render provides free hosting for your AlphaX chatbot:
+
+1. **Push your code to GitHub**
+2. **Connect to Render** at [render.com](https://render.com)
+3. **Set environment variables** (see [DEPLOYMENT.md](DEPLOYMENT.md))
+4. **Deploy automatically**
+
+📖 **Full deployment guide:** [DEPLOYMENT.md](DEPLOYMENT.md)
+
+### Quick Deploy Button
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+*Note: You'll need to set environment variables after deployment.*
+
 ## Project Structure
 
 ```
 ChatBox/
 ├── app.py                 # Flask backend with auth + chat storage
-├── serve_frontend.py      # Simple HTTP server for frontend
+├── serve_frontend.py      # Simple HTTP server for frontend (dev only)
 ├── requirements.txt       # Python dependencies
+├── render.yaml           # Render deployment configuration
 ├── .env                   # Environment variables (create from .env.example)
 ├── .env.example          # Environment variables template
 ├── .gitignore            # Git ignore file
@@ -89,7 +109,8 @@ ChatBox/
 │   ├── index.html        # Main HTML with auth modal
 │   ├── styles.css        # ChatGPT-like styling + auth UI
 │   └── script.js         # Frontend with server sync
-└── README.md             # This file
+├── README.md             # This file
+└── DEPLOYMENT.md         # Deployment guide
 ```
 
 ## Environment Variables

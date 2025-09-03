@@ -9,6 +9,9 @@ class ChatApp {
         this.isOnline = navigator.onLine;
         this.syncInProgress = false;
         
+        // Set API base URL based on environment
+        this.apiBaseUrl = this.getApiBaseUrl();
+        
         this.initializeElements();
         this.bindEvents();
         this.setupTextareaAutoResize();
@@ -16,6 +19,17 @@ class ChatApp {
         
         // Check authentication status
         this.checkAuthStatus();
+    }
+
+    getApiBaseUrl() {
+        // In production (on Render), use relative URLs
+        // In development, use localhost:5000
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:5000';
+        } else {
+            // Production - use relative URLs (same domain)
+            return '';
+        }
     }
 
     initializeElements() {
@@ -127,7 +141,7 @@ class ChatApp {
         if (this.authToken && this.currentUser) {
             try {
                 // Verify token with backend
-                const response = await fetch('http://localhost:5000/api/user', {
+                const response = await fetch(`${this.apiBaseUrl}/api/user`, {
                     headers: {
                         'Authorization': `Bearer ${this.authToken}`
                     }
@@ -270,7 +284,7 @@ class ChatApp {
         this.loginError.textContent = '';
         
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch(`${this.apiBaseUrl}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -325,7 +339,7 @@ class ChatApp {
         this.registerError.textContent = '';
         
         try {
-            const response = await fetch('http://localhost:5000/api/register', {
+            const response = await fetch(`${this.apiBaseUrl}/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -462,7 +476,7 @@ class ChatApp {
             const conversationHistory = this.getConversationHistory();
             
             // Send to backend with auth token
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch(`${this.apiBaseUrl}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -776,7 +790,7 @@ class ChatApp {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/chats', {
+            const response = await fetch(`${this.apiBaseUrl}/api/chats`, {
                 headers: {
                     'Authorization': `Bearer ${this.authToken}`
                 }
@@ -813,7 +827,7 @@ class ChatApp {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/chats', {
+            const response = await fetch(`${this.apiBaseUrl}/api/chats`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -849,7 +863,7 @@ class ChatApp {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/api/chats/${chatId}`, {
+            const response = await fetch(`${this.apiBaseUrl}/api/chats/${chatId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${this.authToken}`

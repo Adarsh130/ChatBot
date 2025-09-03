@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
@@ -12,8 +12,16 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, static_folder='frontend', static_url_path='')
+
+# Configure CORS for production and development
+if os.getenv('FLASK_ENV') == 'production':
+    # In production, allow your Render domain
+    site_url = os.getenv('SITE_URL', 'https://your-app.onrender.com')
+    CORS(app, origins=[site_url])
+else:
+    # In development, allow localhost
+    CORS(app, origins=['http://localhost:8000', 'http://127.0.0.1:8000'])
 
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-change-this-in-production')
@@ -129,9 +137,25 @@ def require_auth(f):
     
     return decorated_function
 
+# Serve frontend files
 @app.route("/")
-def index():
-    return jsonify({"message": "AlphaX backend running with authentication!"})
+def serve_frontend():
+    """Serve the main frontend page"""
+    return send_file('frontend/index.html')
+
+@app.route("/<path:path>")
+def serve_static_files(path):
+    """Serve static files (CSS, JS, etc.)"""
+    try:
+        return send_from_directory('frontend', path)
+    except:
+        # If file not found, serve index.html for SPA routing
+        return send_file('frontend/index.html')
+
+@app.route("/api/health")
+def health_check():
+    """Health check endpoint"""
+    return jsonify({"message": "AlphaX backend running with authentication!", "status": "healthy"})
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -481,9 +505,21 @@ def internal_error(error):
     return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
+    # Get port from environment variable (Render sets this) or default to 5000
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    
     print("🚀 Starting AlphaX backend server with authentication...")
-    print("📡 Server will run on http://localhost:5000")
-    print("🔗 Make sure frontend is running on http://localhost:8000")
+    print(f"📡 Server will run on port {port}")
+    
+    if debug:
+        print("🔗 Development mode - make sure frontend is running on http://localhost:8000")
+        print("🔧 Debug mode enabled")
+    else:
+        print("🌐 Production mode - serving frontend files directly")
+        print("🔒 Debug mode disabled")
+    
     print("🔐 Authentication enabled - users must register/login to chat")
     print("💾 Server-side chat storage enabled - chats sync across devices")
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    
+    app.run(debug=debug, port=port, host='0.0.0.0')

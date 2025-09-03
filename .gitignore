@@ -53,3 +53,14 @@ chats.json
 
 # Logs
 *.log
+
+# Deployment
+.render/
+
+# Local development
+.vscode/settings.json
+.idea/
+
+# Backup files
+*.bak
+*.backup
